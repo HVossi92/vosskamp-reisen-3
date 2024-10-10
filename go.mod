@@ -1,4 +1,4 @@
-module github.com/guillembonet/go-templ-htmx
+module github.com/guillembonet/bunetz
 
 go 1.22
 
@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.2.731
 	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-gonic/gin v1.10.0
+	github.com/russross/blackfriday/v2 v2.1.0
 )
 
 require (

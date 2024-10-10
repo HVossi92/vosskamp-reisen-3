@@ -3,6 +3,7 @@ module.exports = {
   darkMode: 'selector',
   content: [ 
     "./views/**/*.{html,templ,go}",
+    "./blog_posts/**/*.{go,md}",
   ],
   theme: {
     extend: {},

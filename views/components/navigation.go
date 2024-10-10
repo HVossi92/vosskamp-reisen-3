@@ -1,10 +1,12 @@
 package components
 
-type navigationLink struct {
+type NavigationLink struct {
 	Text string
 	Href string
 }
 
-var navigationLinks = []navigationLink{
-	{Text: "Home", Href: "/home"},
+var NavigationLinks = []NavigationLink{
+	{Text: "Blog", Href: "/blog"},
+	{Text: "About me", Href: "/about-me"},
+	{Text: "About this website", Href: "/about-this-website"},
 }
