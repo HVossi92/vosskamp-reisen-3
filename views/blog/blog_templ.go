@@ -28,7 +28,7 @@ func Blog() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container px-6 md:mx-auto mt-4 dark:text-white\"><h1 class=\"text-4xl mb-5\">Bunetz's Blog</h1><h2 class=\"text-3xl mb-3\">Welcome to my Blog!</h2><h3 class=\"text-xl mb-2\">Here you can find all my blog posts. I intend to write about different topics related to software engineering which I believe someone might find useful.</h3><div hx-get=\"/blog/posts\" hx-trigger=\"load\" class=\"text-xl\"></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container px-6 md:mx-auto mt-4 dark:text-white\"><h1 class=\"text-4xl mb-5\">Gruppenreisen Voßkamp</h1><h2 class=\"text-3xl mb-3\">Welcome to my Blog!</h2><h3 class=\"text-xl mb-2\">Here you can find all my blog posts. I intend to write about different topics related to software engineering which I believe someone might find useful.</h3><div hx-get=\"/blog/posts\" hx-trigger=\"load\" class=\"text-xl\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

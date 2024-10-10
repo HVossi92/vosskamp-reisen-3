@@ -23,8 +23,8 @@ func (*Blog) Home(c *gin.Context) {
 }
 
 func (*Blog) Blog(c *gin.Context) {
-	c.HTML(http.StatusOK, "", server.WithBase(c, blog.Blog(), "Bunetz's Blog",
-		"Blog posts about various topics related to software engineering."))
+	c.HTML(http.StatusOK, "", server.WithBase(c, blog.Blog(), "Gruppenreisen Voßkamp",
+		"Blog posts über verschiedene Reisen.."))
 }
 
 func (b *Blog) BlogPosts(c *gin.Context) {

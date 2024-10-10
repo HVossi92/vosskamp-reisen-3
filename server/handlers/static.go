@@ -17,7 +17,7 @@ func NewStatic() *Static {
 	return &Static{}
 }
 
-func (*Static) AboutWebsite(c *gin.Context) {
+func (*Static) HomeWebsite(c *gin.Context) {
 	c.HTML(http.StatusOK, "", server.WithBase(c, about_website.AboutWebsite(), "About this website",
 		"General information about this website."))
 }
@@ -41,7 +41,7 @@ func (*Static) Echo(c *gin.Context) {
 }
 
 func (s *Static) Register(r *gin.RouterGroup) {
-	r.GET("/about-this-website", s.AboutWebsite)
+	r.GET("/home", s.HomeWebsite)
 	r.GET("/about-me", s.AboutMe)
 	r.GET("/echo", s.Echo)
 }
