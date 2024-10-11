@@ -1,0 +1,28 @@
+{{define "footer"}}
+<div>
+    <p>Impressum</p>
+    Boss: {{upperCase .Person.FirstName}} {{.Person.LastName}} {{.Person.Email}}
+    <ul>
+        {{range $key, $value := .Person.Infos}}
+        <li>
+            {{$key}}: {{$value}}
+        </li>
+        {{end}}
+    </ul>
+    <ul>
+        {{range .Person.Interests}}
+        <li>{{.}}</li>
+        {{end}}
+    </ul>
+
+    Signed up: {{getYearMonthDayFrom .Person.Created}}
+
+    <br>
+
+    {{if gt .Person.Position 41}}
+    High Roller
+    {{else}}
+    Peasent
+    {{end}}
+</div>
+{{end}}
