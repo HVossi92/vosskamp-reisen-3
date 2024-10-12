@@ -1,0 +1,6 @@
+{{define "add-task-form"}}
+<form action="" style="max-width: 40rem;">
+    <input type="text" name="task" class="form-control" placeholder="Task">
+    <button hx-post="/task" hx-target="#task-list" class="btn btn-primary mt-2">Add</button>
+</form>
+{{end}}
