@@ -1,61 +1,58 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
-	"time"
+
+	"github.com/gorilla/mux"
+	_ "github.com/mattn/go-sqlite3" // Import the SQLite driver
 )
 
-type Data struct {
-	Person Person
-}
-
-type Person struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Infos     map[string]string
-	Interests []string
-	Created   time.Time
-	Position  int
-}
-
-func upperCase(s string) string {
-	return strings.ToUpper(s)
-}
-
-func getYearMonthDayFrom(date time.Time) string {
-	return date.Format("02-01-2006")
-}
+var db *sql.DB
+var tmpl *template.Template
 
 func main() {
-	fmt.Println("Starting server...")
+	setUpDb()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		funcMap := template.FuncMap{
-			"upperCase":           upperCase,
-			"getYearMonthDayFrom": getYearMonthDayFrom,
-		}
-		template := template.Must(template.New("templates/*.html").Funcs(funcMap).ParseGlob("templates/*.html"))
+	router := mux.NewRouter()
+	router.HandleFunc("/", HomeHandler)
 
-		data := Data{
-			Person{
-				FirstName: "Guillem",
-				LastName:  "Bonet", Email: "hello@bunetz.dev",
-				Infos:     map[string]string{"Address": "Barcelona", "Phone": "123456789", "Date": "2023-01-01"},
-				Interests: []string{"Golang", "Web Development", "Design"},
-				Created:   time.Now(),
-				Position:  40,
-			},
-		}
+	fmt.Println("Listening on port 8080...")
+	err := http.ListenAndServe(":8080", router)
+	if err != nil {
+		panic(err)
+	}
+}
 
-		err := template.ExecuteTemplate(w, "home.html", data)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	})
+func setUpDb() {
+	fmt.Println("Connecting to database...")
+	var err error
+	db, err = sql.Open("sqlite3", "./database.db?_journal=WAL&_busy_timeout=5000&_foreign_keys=on&_synchronous=NORMAL")
+	if err != nil {
+		panic(err)
+	}
 
-	http.ListenAndServe(":8080", nil)
+	setUpTemplate()
+
+	fmt.Println("Initializing database...")
+	statement, err := db.Prepare(("CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, email TEXT, phone TEXT, address TEXT, created_at TEXT, position INTEGER) strict;"))
+	if err != nil {
+		panic(err)
+	}
+	statement.Exec()
+
+	defer db.Close()
+}
+
+func setUpTemplate() {
+	tmpl = template.Must(template.ParseGlob("./templates/*.html"))
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	err := tmpl.ExecuteTemplate(w, "home.html", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
