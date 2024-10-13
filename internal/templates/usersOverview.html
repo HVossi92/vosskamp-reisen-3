@@ -1,0 +1,29 @@
+{{define "userOverview"}}
+
+{{template "authHeader"}}
+
+<table class="table" style="max-width: 80rem;">
+    <thead>
+        <tr>
+            <th scope="col">Vorname</th>
+            <th scope="col">Nachname</th>
+            <th scope="col">Email</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Users}}
+        <tr>
+            <td>{{.FirstName}}</td>
+            <td>{{.LastName}}</td>
+            <td>{{.Email}}</td>
+            <td><button class="btn btn-danger">Löschen</button></td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
+
+{{template "authFooter"}}
+
+{{end}}
