@@ -1,0 +1,54 @@
+{{define "userForm"}}
+<form id="form-container">
+    <div id="errors"></div>
+    <div class="mb-3">
+        <label for="fullName" class="form-label">Vorname</label>
+        <input type="text" name="first-name" class="form-control" id="first-name" placeholder="Vorname"
+            value="{{if .User.FirstName}}{{.User.FirstName}}{{end}}">
+        {{if .ErrorMessages.FirstName}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <div class="mb-3">
+        <label for="fullName" class="form-label">Nachname</label>
+        <input type="text" name="last-name" class="form-control" id="last-name" placeholder="Nachname"
+            value="{{if .User.LastName}}{{.User.LastName}}{{end}}">
+        {{if .ErrorMessages.LastName}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" id="email" placeholder="Email@adresse.de"
+            value="{{if .User.Email}}{{.User.Email}}{{end}}">
+        {{if .ErrorMessages.email}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+        {{if .ErrorMessages.InvalidEmail}}
+        <div class="text-danger">Ungültige Email Adresse</div>
+        {{end}}
+    </div>
+    {{if not .NoPassword}}
+    <div class="mb-3">
+        <label for="password" class="form-label">Passwort</label>
+        <input type="password" name="password" class="form-control" id="password" placeholder="Passwort">
+        {{if .ErrorMessages.Password}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+        {{if .ErrorMessages.PasswordTooShort}}
+        <div class="text-danger">Passwort muss mindestens 8 Zeichen lang sein</div>
+        {{end}}
+    </div>
+    {{end}}
+    <!-- <button hx-post="/cms/users/form" hx-target="#errors" class="btn btn-primary">Anlegen</button> -->
+    {{if .NoPassword}}
+    <button hx-put="/edit-profile" hx-target="#form-container" class="btn btn-primary">
+        Ändern
+    </button>
+    {{else}}
+    <button hx-post="/users/form" hx-target="#form-container" class="btn btn-primary">
+        Anlegen
+    </button>
+    {{end}}
+</form>
+{{end}}
