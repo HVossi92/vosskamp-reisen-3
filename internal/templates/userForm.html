@@ -1,0 +1,35 @@
+{{define "userForm"}}
+<form id="form-container">
+    <div id="errors"></div>
+    <div class="mb-3">
+        <label for="fullName" class="form-label">Vorname</label>
+        <input type="text" name="first-name" class="form-control" id="first-name" placeholder="Vorname">
+        {{if .firstName}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <div class="mb-3">
+        <label for="fullName" class="form-label">Nachname</label>
+        <input type="text" name="last-name" class="form-control" id="last-name" placeholder="Nachname">
+        {{if .lastName}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" id="email" placeholder="Email@adresse.de">
+        {{if .email}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Passwort</label>
+        <input type="password" name="password" class="form-control" id="password" placeholder="Passwort">
+        {{if .password}}
+        <div class="text-danger">Pflichtfeld</div>
+        {{end}}
+    </div>
+    <!-- <button hx-post="/cms/users/form" hx-target="#errors" class="btn btn-primary">Anlegen</button> -->
+    <button hx-post="/cms/users/form" hx-target="#form-container" class="btn btn-primary">Anlegen</button>
+</form>
+{{end}}
