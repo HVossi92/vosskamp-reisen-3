@@ -1,0 +1,54 @@
+{{define "authHeader"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    {{template "libs"}}
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('htmx:configRequest', function (evt) {
+                // Get the CSRF token from the cookies
+                const csrfToken = getCookie('csrf_token');
+                console.log("🚀 ~ document.body.addEventListener ~ csrfToken:", csrfToken);
+
+                // Set the CSRF token in the headers of each request
+                evt.detail.headers['X-CSRF-Token'] = csrfToken;
+            });
+
+            // Function to retrieve the cookie value by name
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+        });
+    </script> -->
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">User Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    {{end}}

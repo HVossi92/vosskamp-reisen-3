@@ -16,10 +16,13 @@ import (
 )
 
 type Server struct {
-	port        int
-	db          database.Service
-	userService *services.UserService
-	tmpl        *template.Template
+	port              int
+	db                database.Service
+	userService       *services.UserService
+	authService       *services.AuthService
+	tokenService      *services.TokenService
+	middleWareService *services.MiddleWareService
+	tmpl              *template.Template
 }
 
 func NewServer() *http.Server {
@@ -30,11 +33,15 @@ func NewServer() *http.Server {
 		log.Fatal(err)
 	}
 
+	tokenService := services.NewTokenService(db)
 	NewServer := &Server{
-		port:        port,
-		db:          db,
-		tmpl:        tmpl,
-		userService: services.NewUserService(db),
+		port:              port,
+		db:                db,
+		tmpl:              tmpl,
+		userService:       services.NewUserService(db),
+		authService:       services.NewAuthService(),
+		tokenService:      tokenService,
+		middleWareService: services.NewMiddleWareService(*tokenService),
 	}
 
 	// Declare Server config

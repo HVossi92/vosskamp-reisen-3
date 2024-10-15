@@ -1,11 +1,11 @@
-// File: services/user.go
-
 package services
 
 import (
 	"fmt"
 	"vosskamp-reisen-3/internal/database"
 	"vosskamp-reisen-3/internal/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -47,23 +47,33 @@ func (s *UserService) FetchUserByEmail(email string) (*models.Users, error) {
 }
 
 func (s *UserService) CreateUser(user models.Users) (*models.Users, error) {
-	query := `INSERT INTO users (username, first_name, last_name, email) 
-              VALUES (:username, :first_name, :last_name, :email) 
-              RETURNING *`
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(passwordHash)
 
-	// Use NamedQueryRow to directly return the inserted user
-	row, err := s.db.Db().NamedQuery(query, user)
+	fmt.Print(user)
+
+	query := `INSERT INTO users (first_name, last_name, email, password, avatar) 
+              VALUES (:first_name, :last_name, :email, :password, "")`
+	result, err := s.db.Db().NamedExec(query, user)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
 
 	// Scan the result into the user struct
-	err = row.StructScan(&user)
+	dbo, err := s.FetchUserById(int(id))
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	return dbo, nil
 }
 
 func (s *UserService) UpdateUser(user models.Users) (*models.Users, error) {

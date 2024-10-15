@@ -62,6 +62,7 @@ func (s *service) seedDb() error {
 	fmt.Println("Seeding database...")
 	models.CreateUsersTable(s.db)
 	models.CreatePostTable(s.db)
+	models.CreateTokenTable(s.db)
 	fmt.Println("Database seeded successfully")
 	return nil
 }
