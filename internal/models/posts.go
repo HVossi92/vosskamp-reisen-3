@@ -7,7 +7,7 @@ import (
 )
 
 type Posts struct {
-	ID        int    `db:"id"`
+	Id        int    `db:"id"`
 	Title     string `db:"title"`
 	Body      string `db:"body"`
 	Picture   string `db:"picture"`
@@ -20,8 +20,8 @@ func CreatePostTable(db *sqlx.DB) error {
     CREATE TABLE IF NOT EXISTS posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
-		body TEXT,
-		picture TEXT,
+		body TEXT NOT NULL,
+		picture TEXT NOT NULL,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     ) strict;`

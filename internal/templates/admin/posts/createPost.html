@@ -1,0 +1,78 @@
+{{define "createPost"}}
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<div id="createPost">
+    <div class="card-header">
+        <i class="fa-solid fa-circle-plus me-1"></i>
+        Add New Post
+    </div>
+
+    <div class="card-body">
+        <form id="editProfileForm" novalidate>
+            <div id="errors"></div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Titel</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="Titel">
+                {{if .ErrorMessages.Title}}
+                <div class="text-danger">Pflichtfeld</div>
+                {{end}}
+            </div>
+
+            <div class="mb-3">
+                <label for="body" class="form-label">Body</label>
+                <div id="quill-editor"></div>
+                <textarea name="body" style="display:none" id="body"></textarea>
+
+                {{if .ErrorMessages.Body}}
+                <div class="text-danger">Pflichtfeld</div>
+                {{end}}
+            </div>
+            <div class="mb-3">
+                <label for="picture" class="form-label">Select Picture</label>
+                <input type="file" class="form-control" id="picture" name="picture">
+            </div>
+
+            <button hx-post="/admin/post" hx-encoding="multipart/form-data" hx-target="#createPost"
+                hx-indicator="#loadingIndicator" type="submit" class="btn btn-primary">Create Post</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    htmx.on("htmx:afterSettle", function (evt) {
+        console.log('afterSettle');
+        waitForQuillThenInit();
+    });
+
+
+    function waitForQuillThenInit() {
+        const checkQuill = setInterval(() => {
+            if (typeof Quill !== 'undefined') {
+                clearInterval(checkQuill);
+                initQuill();
+            }
+        }, 50); // Check every 50ms if Quill is defined
+    }
+
+    let quill;
+    function initQuill() {
+        // Destroy the existing Quill instance if it exists
+        if (quill) {
+            quill.disable(); // Disable the existing instance
+            quill = null
+        }
+        // Create a new instance of Quill
+        quill = new Quill('#quill-editor', {
+            theme: 'snow'
+        });
+
+        quill.on('text-change', (delta, oldDelta, source) => {
+            document.getElementById("body").value = quill.root.innerHTML;
+        });
+    }
+</script>
+
+{{end}}

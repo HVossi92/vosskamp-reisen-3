@@ -10,5 +10,6 @@ require (
 require (
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
+	github.com/yuin/goldmark v1.7.8
 	golang.org/x/crypto v0.28.0
 )

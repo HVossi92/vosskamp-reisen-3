@@ -1,0 +1,63 @@
+{{define "postRows"}}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Titel</th>
+            <th>Text</th>
+            <th>Erstellt</th>
+            <th>Aktualisiert</th>
+            <th>Aktionen</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{range $index, $post := .Posts}}
+        <tr>
+            <!-- <td>{{$index}}</td> -->
+            <td style="width: 300px;">{{$post.Title}}</td>
+            <td>{{$post.Body}}</td>
+            <td>{{$post.CreatedAt}}</td>
+            <td>{{$post.UpdatedAt}}</td>
+            <td style="width: 200px;">
+                <button class="btn btn-primary" hx-get="/admin/post?id={{$post.Id}}" hx-target="#productPagesContainer">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="btn btn-success" hx-get="/admin/posts/edit/{{$post.Id}}"
+                    hx-target="#productPagesContainer">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-danger" hx-delete="/admin/posts/{{$post.Id}}" hx-target="#productPagesContainer"
+                    hx-confirm="Are you sure you want to delete '{{$post.Title}}'?" hx-indicator="#loadingIndicator">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
+<div hx-ext="preload">
+    <ul class="pagination" preload>
+        {{if gt .CurrentPage 1}}
+        <li><a hx-target="#tableBody" hx-get="/admin/posts/rows?page=1&limit={{.Limit}}">First</a></li>
+        <li><a hx-target="#tableBody" hx-get="/admin/posts/rows?page={{.PreviousPage}}&limit={{.Limit}}">Previous</a>
+        </li>
+        {{end}}
+
+        {{range $i := .PageButtonsRange}}
+        <li>
+            <a hx-target="#tableBody" hx-get="/admin/posts/rows?page={{$i}}&limit={{$.Limit}}" {{if eq $i
+                $.CurrentPage}}class="active" {{end}}>
+                {{$i}}
+            </a>
+        </li>
+        {{end}}
+
+        {{if lt .CurrentPage .TotalPages}}
+        <li><a hx-target="#tableBody" hx-get="/admin/posts/rows?page={{.NextPage}}&limit={{.Limit}}">Next</a></li>
+        <li><a hx-target="#tableBody" hx-get="/admin/posts/rows?page={{.TotalPages}}&limit={{.Limit}}">Last</a></li>
+        {{end}}
+    </ul>
+</div>
+
+{{end}}

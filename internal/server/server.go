@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -22,27 +24,25 @@ type Server struct {
 	authService       *services.AuthService
 	tokenService      *services.TokenService
 	middleWareService *services.MiddleWareService
+	postService       *services.PostService
 	tmpl              *template.Template
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
-	tmpl, err := template.ParseGlob("internal/templates/*.html")
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	tokenService := services.NewTokenService(db)
 	userService := services.NewUserService(db)
 	NewServer := &Server{
 		port:              port,
 		db:                db,
-		tmpl:              tmpl,
+		tmpl:              getTemplates(),
 		userService:       userService,
 		authService:       services.NewAuthService(),
 		tokenService:      tokenService,
 		middleWareService: services.NewMiddleWareService(tokenService, userService),
+		postService:       services.NewPostService(db),
 	}
 
 	// Declare Server config
@@ -55,4 +55,32 @@ func NewServer() *http.Server {
 	}
 
 	return server
+}
+
+func getTemplates() *template.Template {
+	tmplDir := "internal/templates"
+	tmpl := template.New("")
+
+	// Walk through all directories and find HTML files
+	err := filepath.Walk(tmplDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// Only process .html files
+		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+			var err error
+			tmpl, err = tmpl.ParseFiles(path)
+			if err != nil {
+				return fmt.Errorf("parsing template %s: %v", path, err)
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		log.Fatalf("Error walking templates: %v", err)
+	}
+
+	tmpl = template.Must(tmpl, err)
+	return tmpl
 }

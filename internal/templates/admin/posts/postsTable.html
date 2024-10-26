@@ -1,0 +1,14 @@
+{{define "postsTable"}}
+<div class="card-header">
+    <i class="fas fa-table me-1"></i>
+    Post Übersicht
+    <button hx-get="/admin/post/create" hx-target="#productPagesContainer" type="button"
+        class="btn btn-success float-end">Neuen Postanlegen</button>
+</div>
+<div class="card-body">
+    <div id="tableBody" hx-get="/admin/posts/rows" hx-trigger="load" hx-indicator="#loadingIndicator">
+    </div>
+</div>
+
+
+{{end}}

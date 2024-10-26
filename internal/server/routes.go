@@ -3,12 +3,15 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
 
 	"github.com/google/uuid"
@@ -20,19 +23,30 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /", s.homeFormHandler)
 	mux.HandleFunc("GET /login", s.fetchLoginPageHandler)
 	mux.HandleFunc("POST /login", s.loginHandler)
+	mux.Handle("DELETE /logout", s.middleWareService.CheckSession(http.HandlerFunc(s.logoutHandler)))
+
 	mux.Handle("GET /profile", s.middleWareService.CheckSession(http.HandlerFunc(s.profileFormHandler)))
 	mux.Handle("GET /edit-profile", s.middleWareService.CheckSession(http.HandlerFunc(s.editProfileFormHandler)))
 	mux.Handle("PUT /edit-profile", s.middleWareService.CheckSession(http.HandlerFunc(s.updateProfile)))
+
 	mux.Handle("GET /upload-avatar", s.middleWareService.CheckSession(http.HandlerFunc(s.uploadAvatarForm)))
 	mux.Handle("POST /upload-avatar", s.middleWareService.CheckSession(http.HandlerFunc(s.uploadAvatar)))
-	mux.Handle("DELETE /logout", s.middleWareService.CheckSession(http.HandlerFunc(s.logoutHandler)))
+
 	mux.Handle("GET /users", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchUsersHandler)))
 	mux.Handle("DELETE /users/{id}", s.middleWareService.CheckSession(http.HandlerFunc(s.deleteUserHandler)))
 	mux.Handle("GET /users/form", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchUserFormHandler)))
 	mux.Handle("POST /users/form", s.middleWareService.CheckSession(http.HandlerFunc(s.createUserFormHandler)))
 
+	mux.Handle("GET /admin/posts", s.middleWareService.CheckSession(http.HandlerFunc(s.getPostsPageHandler)))
+	mux.Handle("GET /admin/posts/rows", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchPostsRows)))
+	mux.Handle("GET /admin/post", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchPost)))
+	mux.Handle("GET /admin/post/create", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchCreatePostFormHandler)))
+	mux.Handle("POST /admin/post", s.middleWareService.CheckSession(http.HandlerFunc(s.createPostHandler)))
+
 	fileServer := http.FileServer(http.Dir("./uploads"))
 	mux.Handle("GET /uploads/", s.middleWareService.CheckSession(http.StripPrefix("/uploads/", fileServer)))
+	staticServer := http.FileServer(http.Dir("./internal/static"))
+	mux.Handle("GET /static/", s.middleWareService.CheckSession(http.StripPrefix("/static/", staticServer)))
 
 	mux.HandleFunc("GET /health", s.healthHandler)
 
@@ -40,7 +54,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) homeFormHandler(w http.ResponseWriter, r *http.Request) {
-	s.tmpl.ExecuteTemplate(w, "home.html", nil)
+	err := s.tmpl.ExecuteTemplate(w, "home.html", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (s *Server) profileFormHandler(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +76,11 @@ func (s *Server) profileFormHandler(w http.ResponseWriter, r *http.Request) {
 		Tab:  "one",
 	}
 
-	s.tmpl.ExecuteTemplate(w, "profile.html", data)
+	err := s.tmpl.ExecuteTemplate(w, "profile.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (s *Server) updateProfile(w http.ResponseWriter, r *http.Request) {
@@ -99,7 +121,7 @@ func (s *Server) updateProfile(w http.ResponseWriter, r *http.Request) {
 		errorMessages["Email"] = true
 		hasErrors = true
 	}
-	if s.authService.IsValidEmail(user.Email) == false {
+	if !s.authService.IsValidEmail(user.Email) {
 		errorMessages["InvalidEmail"] = true
 		hasErrors = true
 	}
@@ -229,6 +251,165 @@ func (s *Server) uploadAvatarForm(w http.ResponseWriter, r *http.Request) {
 	s.tmpl.ExecuteTemplate(w, "uploadAvatar", data)
 }
 
+func (s *Server) getPostsPageHandler(w http.ResponseWriter, r *http.Request) {
+	err := s.tmpl.ExecuteTemplate(w, "posts", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) createPostHandler(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	post := models.Posts{
+		Title: r.FormValue("title"),
+		Body:  r.FormValue("body"),
+	}
+
+	var errorMessages = map[string]bool{
+		"Title": false,
+		"Body":  false,
+	}
+	hasErrors := false
+	if post.Title == "" {
+		errorMessages["Title"] = true
+		hasErrors = true
+	}
+	if post.Body == "" {
+		errorMessages["Body"] = true
+		hasErrors = true
+	}
+
+	if hasErrors {
+		errorFormData := map[string]interface{}{
+			"ErrorMessages": errorMessages,
+			"Post":          post,
+		}
+		s.tmpl.ExecuteTemplate(w, "createPost", errorFormData)
+		return
+	}
+
+	// Retrieve the file from form data
+	file, handler, err := r.FormFile("picture")
+	if err == nil {
+		// Generate a unique filename to prevent overwriting and conflicts
+		uuid, err := uuid.NewRandom()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		filename := uuid.String() + filepath.Ext(handler.Filename) // Append the file extension
+
+		// Create the full path for saving the file
+		filePath := filepath.Join("uploads", filename)
+
+		// Save the file to the server
+		dst, err := os.Create(filePath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer dst.Close()
+		if _, err = io.Copy(dst, file); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		post.Picture = filename
+	}
+
+	_, err = s.postService.CreatePost(post)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("HX-Location", "/admin/posts")
+	w.WriteHeader((http.StatusNoContent))
+}
+
+func (s *Server) fetchCreatePostFormHandler(w http.ResponseWriter, r *http.Request) {
+	err := s.tmpl.ExecuteTemplate(w, "createPost", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) fetchPost(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	post, err := s.postService.FetchPostById(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data := struct {
+		Id        int
+		Title     string
+		Body      template.HTML
+		CreatedAt string
+		UpdatedAt string
+		Picture   string
+	}{
+		Id:        post.Id,
+		Title:     post.Title,
+		Body:      template.HTML(post.Body),
+		CreatedAt: post.CreatedAt,
+		Picture:   post.Picture,
+	}
+
+	err = s.tmpl.ExecuteTemplate(w, "post", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) fetchPostsRows(w http.ResponseWriter, r *http.Request) {
+	page, limit := helpers.GetPagination(r)
+	posts, totalPosts, err := s.postService.FetchPaginatedPosts(page, limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	totalPages := int(math.Ceil(float64(totalPosts) / float64(limit)))
+	data := struct {
+		Posts            *[]models.Posts
+		CurrentPage      int
+		TotalPages       int
+		Limit            int
+		PreviousPage     int
+		NextPage         int
+		PageButtonsRange []int
+	}{
+		Posts:            posts,
+		CurrentPage:      page,
+		TotalPages:       totalPages,
+		Limit:            limit,
+		PreviousPage:     page - 1,
+		NextPage:         page + 1,
+		PageButtonsRange: makeRange(1, totalPages),
+	}
+
+	// time.Sleep(time.Second * 2)
+
+	err = s.tmpl.ExecuteTemplate(w, "postRows", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (s *Server) editProfileFormHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := r.Context().Value("user").(*models.Users)
 	if !ok {
@@ -255,7 +436,6 @@ func (s *Server) editProfileFormHandler(w http.ResponseWriter, r *http.Request) 
 		Tab:           "two",
 	}
 
-	w.Header().Set("Cache-Control", "public, max-age=3600") // Cache for 1 hour
 	s.tmpl.ExecuteTemplate(w, "editProfile", data)
 }
 
@@ -272,7 +452,7 @@ func (s *Server) fetchLoginPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/profile", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/admin/posts", http.StatusTemporaryRedirect)
 }
 
 func (s *Server) logoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -354,7 +534,7 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, sessionCookie)
 
-	w.Header().Set("HX-Location", "/profile")
+	w.Header().Set("HX-Location", "/admin/posts")
 	w.WriteHeader((http.StatusNoContent))
 }
 
@@ -454,7 +634,7 @@ func (s *Server) createUserFormHandler(w http.ResponseWriter, r *http.Request) {
 		errorMessages["PasswordTooShort"] = true
 		hasErrors = true
 	}
-	if s.authService.IsValidEmail(user.Email) == false {
+	if !s.authService.IsValidEmail(user.Email) {
 		errorMessages["InvalidEmail"] = true
 		hasErrors = true
 	}
@@ -486,4 +666,12 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, _ = w.Write(jsonResp)
+}
+
+func makeRange(min, max int) []int {
+	rangeArray := make([]int, max-min+1)
+	for i := range rangeArray {
+		rangeArray[i] = min + i
+	}
+	return rangeArray
 }
