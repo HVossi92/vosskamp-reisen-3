@@ -61,17 +61,6 @@ func (s *PostService) FetchPostById(id int) (*models.Posts, error) {
 	return &post, nil
 }
 
-func (s *PostService) FetchPostByEmail(email string) (*models.Posts, error) {
-	var post models.Posts
-	err := s.db.Db().Get(&post, "SELECT * FROM posts WHERE email = $1 LIMIT 1", email)
-	if err != nil {
-		return nil, err
-	}
-	post.CreatedAt = helpers.GetDayMonthYearFrom(post.CreatedAt)
-	post.UpdatedAt = helpers.GetDayMonthYearFrom(post.UpdatedAt)
-	return &post, nil
-}
-
 func (s *PostService) CreatePost(post models.Posts) (*models.Posts, error) {
 	query := `INSERT INTO posts (title, body, picture) 
               VALUES (:title, :body, :picture)`

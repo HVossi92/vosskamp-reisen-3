@@ -41,6 +41,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.Handle("GET /admin/posts/rows", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchPostsRows)))
 	mux.Handle("GET /admin/post", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchPost)))
 	mux.Handle("GET /admin/post/create", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchCreatePostFormHandler)))
+	mux.Handle("GET /admin/post/update", s.middleWareService.CheckSession(http.HandlerFunc(s.fetchUpdatePostFormHandler)))
 	mux.Handle("POST /admin/post", s.middleWareService.CheckSession(http.HandlerFunc(s.createPostHandler)))
 
 	fileServer := http.FileServer(http.Dir("./uploads"))
@@ -335,6 +336,36 @@ func (s *Server) createPostHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) fetchCreatePostFormHandler(w http.ResponseWriter, r *http.Request) {
 	err := s.tmpl.ExecuteTemplate(w, "createPost", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) fetchUpdatePostFormHandler(w http.ResponseWriter, r *http.Request) {
+	postIdStr := r.URL.Query().Get("id")
+	postId, err := strconv.Atoi(postIdStr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	post, err := s.postService.FetchPostById(postId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Post          *models.Posts
+		ErrorMessages map[string]bool
+	}{
+		Post: post,
+		ErrorMessages: map[string]bool{
+			"Title": false,
+			"Body":  false,
+		},
+	}
+	err = s.tmpl.ExecuteTemplate(w, "createPost", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

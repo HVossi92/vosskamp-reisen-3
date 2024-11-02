@@ -14,7 +14,8 @@
             <div id="errors"></div>
             <div class="mb-3">
                 <label for="name" class="form-label">Titel</label>
-                <input type="text" class="form-control" id="title" name="title" required placeholder="Titel">
+                <input type="text" class="form-control" id="title" name="title" required placeholder="Titel"
+                    value="{{.Post.Title}}">
                 {{if .ErrorMessages.Title}}
                 <div class="text-danger">Pflichtfeld</div>
                 {{end}}
@@ -23,7 +24,7 @@
             <div class="mb-3">
                 <label for="body" class="form-label">Body</label>
                 <div id="quill-editor"></div>
-                <textarea name="body" style="display:none" id="body"></textarea>
+                <textarea name="body" style="display:none" id="body" value="{{.Post.Body}}"></textarea>
 
                 {{if .ErrorMessages.Body}}
                 <div class="text-danger">Pflichtfeld</div>
@@ -68,9 +69,21 @@
         quill = new Quill('#quill-editor', {
             theme: 'snow'
         });
+        const initialContent = `{{.Post.Body | html}}`;
+
+        if (initialContent) {
+            console.log("🚀 ~ initQuill ~ initialContent:", initialContent)
+            // const delta = quill.clipboard.convert({ html: initialContent });
+            // quill.setContents(delta, 'silent');
+            // quill.clipboard.dangerouslyPasteHTML(5, initialContent)
+            quill.setContents(initialContent, 'api')
+        }
 
         quill.on('text-change', (delta, oldDelta, source) => {
-            document.getElementById("body").value = quill.root.innerHTML;
+            // const content = quill.getSemanticHTML();
+            const content = quill.getContents()
+            console.log(content)
+            document.getElementById("body").value = JSON.stringify(content);
         });
     }
 </script>

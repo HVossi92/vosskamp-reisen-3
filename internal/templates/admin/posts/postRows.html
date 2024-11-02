@@ -22,7 +22,7 @@
                 <button class="btn btn-primary" hx-get="/admin/post?id={{$post.Id}}" hx-target="#productPagesContainer">
                     <i class="fa-solid fa-eye"></i>
                 </button>
-                <button class="btn btn-success" hx-get="/admin/posts/edit/{{$post.Id}}"
+                <button class="btn btn-success" hx-get="/admin/post/update?id={{$post.Id}}"
                     hx-target="#productPagesContainer">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
