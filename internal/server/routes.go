@@ -11,9 +11,11 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
 
+	quill "github.com/dchenk/go-render-quill"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -383,6 +385,39 @@ func (s *Server) fetchPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	// Log the raw body for debugging
+	// fmt.Println("Raw post body:", post.Body)
+
+	// // Try to render the post body
+	// html, err := quill.Render([]byte(post.Body))
+	// if err != nil {
+	// 	http.Error(w, "Failed to render post body: "+err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	// var delta = `[{"insert":"This "},{"attributes":{"italic":true},"insert":"is"},
+	// {"insert":" "},{"attributes":{"bold":true},"insert":"great!"},{"insert":"\n"}]`
+
+	// html, err := quill.Render([]byte(delta))
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(string(html))
+
+	start := strings.Index(post.Body, `"ops":[`) + len(`"ops":[`)
+	end := strings.Index(post.Body[start:], `]`) + start
+
+	// Extract the ops array
+	opsArray := "[" + post.Body[start:end] + "]"
+
+	// Print the extracted ops array
+	fmt.Println("Ops Array:", opsArray)
+
+	html, err := quill.Render([]byte(opsArray))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(html))
+
 	data := struct {
 		Id        int
 		Title     string
@@ -393,7 +428,7 @@ func (s *Server) fetchPost(w http.ResponseWriter, r *http.Request) {
 	}{
 		Id:        post.Id,
 		Title:     post.Title,
-		Body:      template.HTML(post.Body),
+		Body:      template.HTML(html),
 		CreatedAt: post.CreatedAt,
 		Picture:   post.Picture,
 	}

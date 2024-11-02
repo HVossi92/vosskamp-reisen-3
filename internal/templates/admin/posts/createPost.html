@@ -40,6 +40,7 @@
         </form>
     </div>
 </div>
+{{.Post.Body}}
 
 
 <script>
@@ -69,14 +70,16 @@
         quill = new Quill('#quill-editor', {
             theme: 'snow'
         });
-        const initialContent = `{{.Post.Body | html}}`;
+        const initialContent = `{{.Post.Body}}`;
 
         if (initialContent) {
             console.log("🚀 ~ initQuill ~ initialContent:", initialContent)
             // const delta = quill.clipboard.convert({ html: initialContent });
             // quill.setContents(delta, 'silent');
             // quill.clipboard.dangerouslyPasteHTML(5, initialContent)
-            quill.setContents(initialContent, 'api')
+            quill.setContents(JSON.parse(initialContent));
+            // quill.setContents({ "ops": [{ "insert": "This will be saved as " }, { "attributes": { "bold": true }, "insert": "JSON" }, { "insert": "\n" }] })
+            // quill.setContents([{ "insert": "This will be saved as " }, { "attributes": { "bold": true }, "insert": "JSON" }, { "insert": "\n" }]);
         }
 
         quill.on('text-change', (delta, oldDelta, source) => {
