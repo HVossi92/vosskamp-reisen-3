@@ -14,4 +14,4 @@ require (
 	golang.org/x/crypto v0.28.0
 )
 
-require github.com/dchenk/go-render-quill v0.0.0-20211110010230-f51106477162 // indirect
+require github.com/dchenk/go-render-quill v0.0.0-20211110010230-f51106477162

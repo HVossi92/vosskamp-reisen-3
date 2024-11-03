@@ -16,6 +16,7 @@
 
 # Go workspace file
 go.work
+
 tmp/
 
 # IDE specific files
@@ -31,3 +32,15 @@ main
 
 # OS X generated file
 .DS_Store
+
+# Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Specific database files (if needed)
+database.db
+database.db-journal
+database.db-shm
+database.db-wal

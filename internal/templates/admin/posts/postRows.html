@@ -3,32 +3,29 @@
     <thead>
         <tr>
             <th>Titel</th>
-            <th>Text</th>
             <th>Erstellt</th>
             <th>Aktualisiert</th>
             <th>Aktionen</th>
         </tr>
     </thead>
-    <tbody>
-
+    <tbody hx-target="closest tr" hx-swap="outerHTML" hx-boost="true">
         {{range $index, $post := .Posts}}
         <tr>
             <!-- <td>{{$index}}</td> -->
             <td style="width: 300px;">{{$post.Title}}</td>
-            <td>{{$post.Body}}</td>
             <td>{{$post.CreatedAt}}</td>
             <td>{{$post.UpdatedAt}}</td>
             <td style="width: 200px;">
-                <button class="btn btn-primary" hx-get="/admin/post?id={{$post.Id}}" hx-target="#productPagesContainer">
-                    <i class="fa-solid fa-eye"></i>
-                </button>
-                <button class="btn btn-success" hx-get="/admin/post/update?id={{$post.Id}}"
-                    hx-target="#productPagesContainer">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button class="btn btn-danger" hx-delete="/admin/posts/{{$post.Id}}" hx-target="#productPagesContainer"
-                    hx-confirm="Are you sure you want to delete '{{$post.Title}}'?" hx-indicator="#loadingIndicator">
-                    <i class="fa-solid fa-trash"></i>
+                <a class="btn btn-primary" hx-get="/admin/post?id={{$post.Id}}" hx-target="#productPagesContainer"
+                    hx-push-url="/admin/{{$post.Id}}">
+                    <i class="ri-eye-line"></i>
+                </a>
+                <a class="btn btn-success" href="/admin/post/update?id={{$post.Id}}" hx-target="#productPagesContainer">
+                    <i class="ri-edit-box-line"></i>
+                </a>
+                <button hx-confirm="Soll {{$post.Title}} wirklich gelöscht werden?" class="btn btn-danger"
+                    hx-delete="/admin/post?id={{$post.Id}}" hx-indicator="#loadingIndicator">
+                    <i class="ri-delete-bin-line"></i>
                 </button>
             </td>
         </tr>
@@ -59,5 +56,4 @@
         {{end}}
     </ul>
 </div>
-
 {{end}}

@@ -43,7 +43,7 @@ func (s *PostService) FetchPaginatedPosts(page int, limit int) (*[]models.Posts,
 		post.CreatedAt = helpers.GetDayMonthYearFrom(post.CreatedAt)
 		post.UpdatedAt = helpers.GetDayMonthYearFrom(post.UpdatedAt)
 		if len(post.Body) > 32 {
-			post.Body = post.Body[:64] + "..."
+			post.Body = post.Body[:32] + "..."
 		}
 	}
 

@@ -1,0 +1,49 @@
+{{define "homePosts"}}
+<div class="row row-cols g-4">
+    {{range $index, $post := .Posts}}
+    <div class="col-sm-3">
+        <div class="card mb-2">
+            {{if $post.Picture}}
+            <img src="/static/uploads/{{$post.Picture}}" class="card-img-top" alt="{{$post.Title}}">
+            {{else}}
+            <img src="/static/assets/placeholder.png" class="card-img-top" alt="{{$post.Title}}">
+            {{end}}
+            <div class="card-body">
+                <h5 class="card-title">{{$post.Title}}</h5>
+                <p class="card-text">
+                    <small class="text-muted text-truncate" style="max-width: 200px; display: inline-block;">
+                        {{$post.Picture}}
+                        Description
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<br>
+<div hx-ext="preload">
+    <ul class="pagination" preload>
+        {{if gt .CurrentPage 1}}
+        <li><a hx-target="#home-rows" hx-get="/posts?page=1&limit={{.Limit}}">First</a></li>
+        <li><a hx-target="#home-rows" hx-get="/posts?page={{.PreviousPage}}&limit={{.Limit}}">Previous</a>
+        </li>
+        {{end}}
+
+        {{range $i := .PageButtonsRange}}
+        <li>
+            <a hx-target="#home-rows" hx-get="/posts?page={{$i}}&limit={{$.Limit}}" {{if eq $i
+                $.CurrentPage}}class="active" {{end}}>
+                {{$i}}
+            </a>
+        </li>
+        {{end}}
+
+        {{if lt .CurrentPage .TotalPages}}
+        <li><a hx-target="#home-rows" hx-get="/posts?page={{.NextPage}}&limit={{.Limit}}">Next</a></li>
+        <li><a hx-target="#home-rows" hx-get="/posts?page={{.TotalPages}}&limit={{.Limit}}">Last</a></li>
+        {{end}}
+    </ul>
+</div>
+{{end}}

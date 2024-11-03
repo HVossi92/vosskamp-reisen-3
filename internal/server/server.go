@@ -66,8 +66,7 @@ func getTemplates() *template.Template {
 		if err != nil {
 			return err
 		}
-		// Only process .html files
-		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+		if !info.IsDir() && (strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".gohtml")) {
 			var err error
 			tmpl, err = tmpl.ParseFiles(path)
 			if err != nil {
