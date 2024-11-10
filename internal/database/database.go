@@ -51,19 +51,28 @@ func New() Service {
 	dbInstance = &service{
 		db: db,
 	}
-	err = dbInstance.seedDb()
+	err = dbInstance.migrateDb()
 	if err != nil {
 		log.Fatal(err)
 	}
 	return dbInstance
 }
 
-func (s *service) seedDb() error {
-	fmt.Println("Seeding database...")
-	models.CreateUsersTable(s.db)
-	models.CreatePostTable(s.db)
-	models.CreateTokenTable(s.db)
-	fmt.Println("Database seeded successfully")
+func (s *service) migrateDb() error {
+	fmt.Println("Migrating database...")
+	err := models.CreateUsersTable(s.db)
+	if err != nil {
+		return err
+	}
+	err = models.CreatePostTable(s.db)
+	if err != nil {
+		return err
+	}
+	err = models.CreateTokenTable(s.db)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Database migrated successfully")
 	return nil
 }
 

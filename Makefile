@@ -5,9 +5,13 @@ all: build test
 
 build:
 	@echo "Building..."
-	
-	
-	@go build -o main cmd/api/main.go
+	@go build -o vosskamp-reisen-3 ./cmd/api/main.go
+	@echo "Finished building"
+
+build-docker:
+	@echo "Building Docker image..."
+	docker build --platform linux/amd64 -t hvossi92/vosskamp-reisen-3 .
+	@echo "Finished building Docker image"
 
 # Run the application
 run:

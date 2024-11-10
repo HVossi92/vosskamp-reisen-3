@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"vosskamp-reisen-3/internal/models"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -54,6 +55,23 @@ func NewServer() *http.Server {
 		WriteTimeout: 30 * time.Second,
 	}
 
+	fmt.Println("Seeding database...")
+	existingAdmin, _ := userService.FetchUserByEmail("admin@vk3.de")
+	if existingAdmin == nil {
+		fmt.Println("Creating admin...")
+		admin := models.Users{
+			FirstName: "Admin",
+			LastName:  "Admin",
+			Email:     os.Getenv("ADMIN_EMAIL"),
+			Password:  os.Getenv("ADMIN_PASSWORD"),
+		}
+		_, err := userService.CreateUser(admin)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Created admin successfully")
+	}
+	fmt.Println("Database seeded successfully")
 	return server
 }
 

@@ -1,12 +1,11 @@
 package server
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"math"
 	"net/http"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -144,5 +143,6 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, sessionCookie)
 
 	w.Header().Set("HX-Location", "/admin/posts")
-	w.WriteHeader((http.StatusNoContent))
+	w.WriteHeader(http.StatusNoContent)
+
 }
