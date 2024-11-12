@@ -1,0 +1,28 @@
+package user
+
+import "vosskamp-reisen-3/internal/templates"
+
+templ Home() {
+	<!DOCTYPE html>
+	<html lang="en">
+		@templates.Libs()
+		<body>
+			@UserHeader()
+			<div class="container mt-4">
+				<div id="mainShoppingSection">
+					<div class="progress htmx-indicator" id="shoppingItemsIndicator">
+						<div
+							class="progress-bar progress-bar-striped progress-bar-animated"
+							role="progressbar"
+							aria-valuenow="100"
+							aria-valuemin="0"
+							aria-valuemax="100"
+							style="width: 100%"
+						></div>
+					</div>
+					<div id="home-posts" hx-get="/posts" hx-trigger="load" hx-indicator="#shoppingItemsIndicator"></div>
+				</div>
+			</div>
+		</body>
+	</html>
+}

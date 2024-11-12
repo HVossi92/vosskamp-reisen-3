@@ -1,11 +1,15 @@
 package server
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"math"
 	"net/http"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
+	"vosskamp-reisen-3/internal/structs"
+	"vosskamp-reisen-3/internal/templates/user"
+
+	"github.com/a-h/templ"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -28,39 +32,38 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) homeFormHandler(w http.ResponseWriter, r *http.Request) {
-	err := s.tmpl.ExecuteTemplate(w, "home", nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	home := user.Home()
+	handler := templ.Handler(home)
+	handler.ServeHTTP(w, r)
 }
 
 func (s *Server) homePostsHandler(w http.ResponseWriter, r *http.Request) {
 	page, limit := helpers.GetPagination(r)
 	posts, total, err := s.postService.FetchPaginatedPosts(page, limit)
-	totalPages := int(math.Ceil(float64(total) / float64(limit)))
-	data := struct {
-		Posts            *[]models.Posts
-		CurrentPage      int
-		TotalPages       int
-		Limit            int
-		PreviousPage     int
-		NextPage         int
-		PageButtonsRange []int
-	}{
-		Posts:            posts,
-		CurrentPage:      page,
-		TotalPages:       totalPages,
-		Limit:            limit,
-		PreviousPage:     page - 1,
-		NextPage:         page + 1,
-		PageButtonsRange: makeRange(1, totalPages),
-	}
-	err = s.tmpl.ExecuteTemplate(w, "homePosts", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	totalPages := int(math.Ceil(float64(total) / float64(limit)))
+	data := structs.HomePostsData{
+		Posts: posts,
+		PaginatedData: structs.PaginatedData{
+			CurrentPage:      page,
+			TotalPages:       totalPages,
+			Limit:            limit,
+			PreviousPage:     page - 1,
+			NextPage:         page + 1,
+			PageButtonsRange: makeRange(1, totalPages),
+		},
+	}
+	homePosts := user.HomePosts(data)
+	handler := templ.Handler(homePosts)
+	handler.ServeHTTP(w, r)
+	// err = s.tmpl.ExecuteTemplate(w, "homePosts", data)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 }
 
 func (s *Server) logoutHandler(w http.ResponseWriter, r *http.Request) {

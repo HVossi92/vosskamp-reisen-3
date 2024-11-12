@@ -15,3 +15,5 @@ require (
 )
 
 require github.com/dchenk/go-render-quill v0.0.0-20211110010230-f51106477162
+
+require github.com/a-h/templ v0.2.793
