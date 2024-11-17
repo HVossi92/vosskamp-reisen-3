@@ -1,19 +1,36 @@
 package user
 
 templ UserHeader() {
-	<nav class="navbar navbar-dark bg-dark">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<div class="container">
-			<span class="navbar-brand mb-0 h1">Gruppenreisen Voßkamp</span>
-			<a class="btn btn-primary" preload href="/login" title="Admin login">
-				<i class="ri-admin-line"></i>
-			</a>
+			<a class="navbar-brand" href="#">Gruppenreisen Voßkamp</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Destinations</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Blog</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">About Us</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Contact</a>
+					</li>
+					<li class="nav-item">
+						<a class="btn btn-primary" preload href="/login" title="Admin login">
+							<i class="ri-admin-line"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</nav>
 }
-
-
-
-
-
-
-
