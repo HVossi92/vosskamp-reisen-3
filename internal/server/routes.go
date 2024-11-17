@@ -19,6 +19,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /login", s.fetchLoginPageHandler)
 	mux.HandleFunc("POST /login", s.loginHandler)
 	mux.Handle("DELETE /logout", s.middleWareService.CheckSession(http.HandlerFunc(s.logoutHandler)))
+	mux.HandleFunc("GET /affiliate", s.affiliateHandler)
+	mux.HandleFunc("GET /about", s.aboutHandler)
+	mux.HandleFunc("GET /contact", s.contactHandler)
+	mux.HandleFunc("GET /blog", s.blogHandler)
 
 	s.RegisterPostRoutes(mux)
 	s.RegisterUserRoutes(mux)
@@ -32,8 +36,45 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) homeFormHandler(w http.ResponseWriter, r *http.Request) {
-	home := user.Home()
-	handler := templ.Handler(home)
+	handler := templ.Handler(user.Home())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) affiliateHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Affiliate())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.About())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) blogHandler(w http.ResponseWriter, r *http.Request) {
+	page, limit := helpers.GetPagination(r)
+	posts, total, err := s.postService.FetchPaginatedPosts(page, limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	totalPages := int(math.Ceil(float64(total) / float64(limit)))
+	data := structs.HomePostsData{
+		Posts: posts,
+		PaginatedData: structs.PaginatedData{
+			CurrentPage:      page,
+			TotalPages:       totalPages,
+			Limit:            limit,
+			PreviousPage:     page - 1,
+			NextPage:         page + 1,
+			PageButtonsRange: makeRange(1, totalPages),
+		},
+	}
+	handler := templ.Handler(user.Blog(data))
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Contact())
 	handler.ServeHTTP(w, r)
 }
 
@@ -59,11 +100,6 @@ func (s *Server) homePostsHandler(w http.ResponseWriter, r *http.Request) {
 	homePosts := user.HomePosts(data)
 	handler := templ.Handler(homePosts)
 	handler.ServeHTTP(w, r)
-	// err = s.tmpl.ExecuteTemplate(w, "homePosts", data)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
 }
 
 func (s *Server) logoutHandler(w http.ResponseWriter, r *http.Request) {

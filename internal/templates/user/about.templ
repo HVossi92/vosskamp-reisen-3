@@ -1,0 +1,95 @@
+package user
+
+import "vosskamp-reisen-3/internal/templates"
+
+templ About() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>About Us - Wanderlust Adventures</title>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+			<style>
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        .hero-content {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+    </style>
+		</head>
+		@templates.Libs()
+		<body>
+			@UserHeader()
+			<header class="hero">
+				<div class="hero-content">
+					<h1 class="display-4">About Wanderlust Adventures</h1>
+					<p class="lead">Discover our story and meet the team behind your unforgettable journeys</p>
+				</div>
+			</header>
+			<main class="container my-5">
+				<section class="mb-5">
+					<h2 class="mb-4">Our Story</h2>
+					<p>Wanderlust Adventures was born out of a passion for exploration and a desire to share the wonders of the world with fellow travelers. Founded in 2010 by a group of avid globetrotters, our mission is to create unforgettable experiences that inspire, educate, and transform.</p>
+					<p>Over the years, we've grown from a small local agency to a trusted name in the travel industry, known for our expertly crafted itineraries, commitment to sustainable tourism, and dedication to customer satisfaction. Our team of experienced travel professionals works tirelessly to ensure that every journey with Wanderlust Adventures is nothing short of extraordinary.</p>
+				</section>
+				<section class="mb-5">
+					<h2 class="mb-4">Our Mission</h2>
+					<p>At Wanderlust Adventures, our mission is to:</p>
+					<ul>
+						<li>Inspire curiosity and foster cultural understanding through travel</li>
+						<li>Provide exceptional, personalized experiences for every traveler</li>
+						<li>Promote responsible and sustainable tourism practices</li>
+						<li>Support local communities in the destinations we visit</li>
+						<li>Continuously innovate and improve our services to exceed customer expectations</li>
+					</ul>
+				</section>
+				<section>
+					<h2 class="mb-4">Meet Our Team</h2>
+					<div class="row">
+						<div class="col-md-4 mb-4">
+							<div class="card">
+								<img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" class="card-img-top" alt="Sarah Johnson"/>
+								<div class="card-body">
+									<h5 class="card-title">Sarah Johnson</h5>
+									<p class="card-text">Founder & CEO</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 mb-4">
+							<div class="card">
+								<img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" class="card-img-top" alt="Michael Chen"/>
+								<div class="card-body">
+									<h5 class="card-title">Michael Chen</h5>
+									<p class="card-text">Head of Operations</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4 mb-4">
+							<div class="card">
+								<img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1176&q=80" class="card-img-top" alt="Emily Rodriguez"/>
+								<div class="card-body">
+									<h5 class="card-title">Emily Rodriguez</h5>
+									<p class="card-text">Lead Travel Consultant</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</main>
+			@UserFooter()
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+		</body>
+	</html>
+}

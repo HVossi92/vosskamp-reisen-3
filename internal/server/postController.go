@@ -140,7 +140,7 @@ func (s *Server) updatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if existingPost.Picture != "" {
+	if existingPost.Picture != "" && post.Picture != "" {
 		err := removePicture(w, err, existingPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

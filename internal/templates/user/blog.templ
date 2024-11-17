@@ -1,0 +1,129 @@
+package user
+
+import (
+	"fmt"
+	"strconv"
+	"vosskamp-reisen-3/internal/structs"
+	"vosskamp-reisen-3/internal/templates"
+)
+
+templ Blog(data structs.HomePostsData) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Blog - Wanderlust Adventures</title>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+			<style>
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        .hero-content {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+    </style>
+		</head>
+		@templates.Libs()
+		<body>
+			@UserHeader()
+			<header class="hero">
+				<div class="hero-content">
+					<h1 class="display-4">Wanderlust Adventures Blog</h1>
+					<p class="lead">Travel tips, destination guides, and inspiring stories from around the world</p>
+				</div>
+			</header>
+			// <div class="row row-cols g-4">
+			// 	for _, post := range *data.Posts {
+			// 		<div class="col-sm-3">
+			// 			<div class="card mb-2">
+			// 				if len(post.Picture)>0 {
+			// 					<img src={ "/static/uploads/" + post.Picture } class="card-img-top" alt="{{$post.Title}}"/>
+			// 				} else {
+			// 					<img src="/static/assets/placeholder.png" class="card-img-top" alt="{{$post.Title}}"/>
+			// 				}
+			// 				<div class="card-body">
+			// 					<h5 class="card-title">{ post.Title }</h5>
+			// 					<p class="card-text">
+			// 						<small class="text-muted text-truncate" style="max-width: 200px; display: inline-block;">
+			// 							{ post.Body }
+			// 						</small>
+			// 					</p>
+			// 				</div>
+			// 			</div>
+			// 		</div>
+			// 	}
+			// 	<br/>
+			// </div>
+			<main class="container my-5">
+				<div class="row">
+					<div class="col-lg">
+						for _, post := range *data.Posts {
+							<article class="mb-5">
+								<h2>{ post.Title }</h2>
+								<p class="text-muted">{ post.UpdatedAt }</p>
+								if len(post.Picture)>0 {
+									<img src={ "/static/uploads/" + post.Picture } class="card-img-top" alt={ post.Title }/>
+								} else {
+									<img src="/static/assets/placeholder.png" class="card-img-top" alt={ post.Title }/>
+								}
+								<p>Europe is full of well-known destinations, but there are still plenty of hidden gems waiting to be discovered. In this post, we'll take you on a journey to 10 lesser-known but equally stunning locations across the continent...</p>
+								<a href="#" class="btn btn-primary">Mehr</a>
+							</article>
+						}
+						<article class="mb-5">
+							<h2>10 Must-Visit Hidden Gems in Europe</h2>
+							<p class="text-muted">Posted on June 15, 2023 by Sarah Johnson</p>
+							<img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1086&q=80" alt="Hidden Gems in Europe" class="img-fluid mb-3"/>
+							<p>Europe is full of well-known destinations, but there are still plenty of hidden gems waiting to be discovered. In this post, we'll take you on a journey to 10 lesser-known but equally stunning locations across the continent...</p>
+							<a href="#" class="btn btn-primary">Read More</a>
+						</article>
+						<article class="mb-5">
+							<h2>A Foodie's Guide to Southeast Asian Cuisine</h2>
+							<p class="text-muted">Posted on June 10, 2023 by Michael Chen</p>
+							<img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Southeast Asian Cuisine" class="img-fluid mb-3"/>
+							<p>Southeast Asia is a food lover's paradise, offering a diverse array of flavors, textures, and culinary traditions. From the streets of Bangkok to the markets of Hanoi, join us as we explore the mouthwatering world of Southeast Asian cuisine...</p>
+							<a href="#" class="btn btn-primary">Read More</a>
+						</article>
+						<article class="mb-5">
+							<h2>Sustainable Travel: Tips for Eco-Friendly Adventures</h2>
+							<p class="text-muted">Posted on June 5, 2023 by Emily Rodriguez</p>
+							<img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1213&q=80" alt="Eco-Friendly Travel" class="img-fluid mb-3"/>
+							<p>As travelers, it's our responsibility to minimize our impact on the environment and support local communities. In this post, we'll share practical tips and advice for making your next adventure more sustainable and eco-friendly...</p>
+							<a href="#" class="btn btn-primary">Read More</a>
+						</article>
+						<nav aria-label="pagination" hx-ext="preload">
+							<ul class="pagination" preload>
+								if data.CurrentPage>1 {
+									<li><a hx-target="#home-rows" hx-get="/posts?page=1&limit={{.Limit}}">First</a></li>
+									<li>
+										<a hx-target="#home-rows" hx-get="/posts?page={{.PreviousPage}}&limit={{.Limit}}">Previous</a>
+									</li>
+								}
+								for i := range data.PageButtonsRange {
+									<li>
+										<a class={ "active", templ.KV("active", i+1==data.CurrentPage) } hx-target="#home-rows" hx-get={ fmt.Sprintf("/posts?page=%d&limit=%d", i, data.Limit) }>
+											{ strconv.Itoa(i+1) }
+										</a>
+									</li>
+								}
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</main>
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+			@UserFooter()
+		</body>
+	</html>
+}
