@@ -3,6 +3,7 @@ package server
 import (
 	"math"
 	"net/http"
+	"strconv"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
 	"vosskamp-reisen-3/internal/structs"
@@ -17,18 +18,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /", s.homeFormHandler)
 	mux.HandleFunc("GET /posts", s.homePostsHandler)
 	mux.HandleFunc("GET /login", s.fetchLoginPageHandler)
+	mux.HandleFunc("GET /post/{id}", s.postHandler)
 	mux.HandleFunc("POST /login", s.loginHandler)
 	mux.Handle("DELETE /logout", s.middleWareService.CheckSession(http.HandlerFunc(s.logoutHandler)))
 	mux.HandleFunc("GET /affiliate", s.affiliateHandler)
 	mux.HandleFunc("GET /about", s.aboutHandler)
 	mux.HandleFunc("GET /contact", s.contactHandler)
-	mux.HandleFunc("GET /blog", s.blogHandler)
 
 	s.RegisterPostRoutes(mux)
+	s.RegisterEmailRoutes(mux)
 	s.RegisterUserRoutes(mux)
 
-	// fileServer := http.FileServer(http.Dir("./uploads"))
-	// mux.Handle("GET /uploads/", s.middleWareService.CheckSession(http.StripPrefix("/uploads/", fileServer)))
 	staticServer := http.FileServer(http.Dir("./internal/static"))
 	mux.Handle("GET /static/", http.StripPrefix("/static/", staticServer))
 
@@ -36,21 +36,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func (s *Server) homeFormHandler(w http.ResponseWriter, r *http.Request) {
-	handler := templ.Handler(user.Home())
-	handler.ServeHTTP(w, r)
-}
-
-func (s *Server) affiliateHandler(w http.ResponseWriter, r *http.Request) {
-	handler := templ.Handler(user.Affiliate())
-	handler.ServeHTTP(w, r)
-}
-
-func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
-	handler := templ.Handler(user.About())
-	handler.ServeHTTP(w, r)
-}
-
-func (s *Server) blogHandler(w http.ResponseWriter, r *http.Request) {
 	page, limit := helpers.GetPagination(r)
 	posts, total, err := s.postService.FetchPaginatedPosts(page, limit)
 	if err != nil {
@@ -69,12 +54,7 @@ func (s *Server) blogHandler(w http.ResponseWriter, r *http.Request) {
 			PageButtonsRange: makeRange(1, totalPages),
 		},
 	}
-	handler := templ.Handler(user.Blog(data))
-	handler.ServeHTTP(w, r)
-}
-
-func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
-	handler := templ.Handler(user.Contact())
+	handler := templ.Handler(user.Home(data))
 	handler.ServeHTTP(w, r)
 }
 
@@ -97,8 +77,43 @@ func (s *Server) homePostsHandler(w http.ResponseWriter, r *http.Request) {
 			PageButtonsRange: makeRange(1, totalPages),
 		},
 	}
-	homePosts := user.HomePosts(data)
-	handler := templ.Handler(homePosts)
+	handler := templ.Handler(user.Blog(data))
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) postHandler(w http.ResponseWriter, r *http.Request) {
+	postIdString := r.PathValue(("id"))
+	postId, err := strconv.Atoi(postIdString)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	post, err := s.postService.FetchPostById(postId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// html, err := helpers.ConvertQuillToHtml(post.Body)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	handler := templ.Handler(user.Post(*post))
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) affiliateHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Affiliate())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.About())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Contact())
 	handler.ServeHTTP(w, r)
 }
 

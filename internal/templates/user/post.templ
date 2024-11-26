@@ -1,0 +1,44 @@
+package user
+
+import (
+	"fmt"
+	"vosskamp-reisen-3/internal/helpers"
+	"vosskamp-reisen-3/internal/models"
+	"vosskamp-reisen-3/internal/templates"
+)
+
+templ Post(post models.Posts) {
+	<!DOCTYPE html>
+	<html lang="de">
+		@templates.Libs()
+		<body hx-ext="preload">
+			@UserHeader(0)
+			<br/>
+			<br/>
+			<br/>
+			<header class="blog-header">
+				<div class="container">
+					<h1 class="display-4">{ post.Title }</h1>
+					<div class="d-flex align-items-center">
+						<span class="me-3"><i class="bi bi-calendar"></i> { post.CreatedAt }</span>
+						<span><i class="bi bi-tag"></i> { post.Title }</span>
+					</div>
+				</div>
+			</header>
+			<main class="container">
+				<div class="row">
+					<div class="col-lg-8">
+						<article class="blog-content">
+							if post.Picture != "" {
+								<img src={ fmt.Sprintf("/static/uploads/%s", post.Picture) } width="300" alt="{{.Title}}" class="img-fluid rounded"/>
+							}
+							<div>
+								@templ.Raw(helpers.ConvertQuillToHtmlIgnoreError(post.Body))
+							</div>
+						</article>
+					</div>
+				</div>
+			</main>
+		</body>
+	</html>
+}

@@ -12,7 +12,7 @@ func GetPagination(r *http.Request) (int, int) {
 	}
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil || limit < 1 {
-		limit = 10
+		limit = 4
 	}
 	return page, limit
 }

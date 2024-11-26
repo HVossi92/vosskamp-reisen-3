@@ -27,6 +27,7 @@ type Server struct {
 	middleWareService *services.MiddleWareService
 	postService       *services.PostService
 	tmpl              *template.Template
+	emailService      *services.EmailService
 }
 
 func NewServer() *http.Server {
@@ -44,6 +45,7 @@ func NewServer() *http.Server {
 		tokenService:      tokenService,
 		middleWareService: services.NewMiddleWareService(tokenService, userService),
 		postService:       services.NewPostService(db),
+		emailService:      services.NewEmailService(),
 	}
 
 	// Declare Server config

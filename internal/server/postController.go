@@ -8,11 +8,9 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
 
-	quill "github.com/dchenk/go-render-quill"
 	"github.com/google/uuid"
 )
 
@@ -251,15 +249,10 @@ func (s *Server) fetchPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start := strings.Index(post.Body, `"ops":[`) + len(`"ops":[`)
-	end := strings.Index(post.Body[start:], `]`) + start
-
-	// Extract the ops array
-	opsArray := "[" + post.Body[start:end] + "]"
-
-	html, err := quill.Render([]byte(opsArray))
+	html, err := helpers.ConvertQuillToHtml(post.Body)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	data := struct {
@@ -272,7 +265,7 @@ func (s *Server) fetchPost(w http.ResponseWriter, r *http.Request) {
 	}{
 		Id:        post.Id,
 		Title:     post.Title,
-		Body:      template.HTML(html),
+		Body:      html,
 		CreatedAt: post.CreatedAt,
 		Picture:   post.Picture,
 	}
