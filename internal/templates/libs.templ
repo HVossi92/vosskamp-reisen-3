@@ -48,6 +48,15 @@ templ Libs() {
                 font-size: 100px;
                 color: #28a745;
             }
+            .htmx-indicator {
+                display: none;
+            }
+            .htmx-request .htmx-indicator{
+                display: inline-block;
+            }
+            .htmx-request.htmx-indicator{
+                display: inline-block;
+            }
         </style>
 		<script>
             htmx.on("htmx:beforeRequest", function(evt) {

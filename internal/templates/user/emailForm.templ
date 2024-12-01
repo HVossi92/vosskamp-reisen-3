@@ -4,7 +4,7 @@ import "vosskamp-reisen-3/internal/structs"
 
 templ EmailForm(data *structs.EmailData) {
 	<h2>Senden Sie uns eine E-Mail</h2>
-	<form hx-post="/email">
+	<form hx-post="/email" hx-disabled-elt="find button">
 		<div class="mb-3">
 			<label for="name" class="form-label">Name</label>
 			<input
@@ -71,6 +71,9 @@ templ EmailForm(data *structs.EmailData) {
 				{ data.ErrorMsg }
 			</div>
 		}
-		<button type="submit" class="btn btn-primary">Absenden</button>
+		<button hx-indicator="#spinner" type="submit" class="btn btn-primary">
+			Absenden
+			<span id="spinner" class="htmx-indicator spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+		</button>
 	</form>
 }

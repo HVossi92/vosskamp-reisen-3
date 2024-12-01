@@ -1,19 +1,12 @@
-FROM golang:1.23
+FROM --platform=linux/amd64 golang:1.23 AS builder
 
+RUN apt-get update && apt-get install -y zip
+
+# Set the working directory
 WORKDIR /app
 
-COPY go.* ./
-
-RUN go mod download
-
+# Copy your source code
 COPY . .
 
-# Set up environment variables for cross-compilation
-ENV GOOS=linux
-ENV GOARCH=amd64
-
-EXPOSE 8080
-
-RUN go build -o cmd/api/main ./cmd/api/main.go
-
-CMD ["./cmd/api/main"]
+# Build command
+CMD ["make", "build-docker"]
