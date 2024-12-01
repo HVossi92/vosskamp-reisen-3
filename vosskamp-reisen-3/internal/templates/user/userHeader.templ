@@ -1,0 +1,50 @@
+package user
+
+templ UserHeader(active int) {
+	<div class="sticky-wrapper">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+			<div class="container">
+				<a class="navbar-brand" href="/">Gruppenreisen Voßkamp</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav ms-auto">
+						<li class="nav-item">
+							<a class={ "nav-link", templ.KV("active", active == 0) } href="/">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class={ "nav-link", templ.KV("active", active == 1) } href="/affiliate">Affiliate</a>
+						</li>
+						<li class="nav-item">
+							<a class={ "nav-link", templ.KV("active", active == 2) } href="/about">Über uns</a>
+						</li>
+						<li class="nav-item">
+							<a class={ "nav-link", templ.KV("active", active == 3) } href="/contact">Kontakt</a>
+						</li>
+						<li class="nav-item">
+							<a class="btn btn-primary" preload href="/login" title="Admin login">
+								<i class="ri-admin-line"></i>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<style type="text/css">
+            .sticky-wrapper .navbar.sticky-top {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                z-index: 1030;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            body {
+                padding-top: 56px;
+            }
+            .sticky-wrapper .navbar {
+                transition: box-shadow 0.3s ease-in-out;
+            }
+        </style>
+	</div>
+}

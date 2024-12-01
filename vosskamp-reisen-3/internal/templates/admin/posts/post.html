@@ -1,0 +1,35 @@
+{{define "post"}}
+<div id="view-post">
+
+    <div class="card-body">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    {{if gt (len .Picture) 1}}
+                    <img src="/static/uploads/{{.Picture}}" width="300" alt="{{.Title}}" class="img-fluid rounded">
+                    {{end}}
+                </div>
+                <div class="col-md-6">
+                    <h1 class="mb-4">{{.Title}}</h1>
+                    <p class="lead mb-4">{{.Body}}</p>
+                    <p class="lead mb-4">{{.CreatedAt}}</p>
+                    <p class="lead mb-4">{{.UpdatedAt}}</p>
+                    <a hx-get="/admin/post/update?id={{.Id}}" hx-target="#view-post"
+                        class="btn btn-outline-secondary btn-lg ms-2">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Out of Bound swap for Action button -->
+    <div style="display: none;">
+        <div id="pageActionButton" hx-swap-oob="true">
+            <button hx-get="/allproducts" hx-target="#productPagesContainer" type="button" class="btn btn-primary">All
+                Posts</button>
+        </div>
+    </div>
+</div>
+
+
+
+{{end}}

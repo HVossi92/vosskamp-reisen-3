@@ -1,0 +1,42 @@
+{{define "adminSideMenu"}}
+
+<div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu" hx-ext="preload">
+            <div class="nav" hx-boost="true" preload>
+                <div class="sb-sidenav-menu-heading">Home</div>
+                <a class="nav-link" href="/">
+                    <div class="sb-nav-link-icon"><i class="ri-pages-line"></i></div>
+                    Website
+                </a>
+
+                <div class="sb-sidenav-menu-heading">Pages</div>
+                <a class="nav-link" href="/admin/posts">
+                    <div class="sb-nav-link-icon">
+                        <i class="ri-draft-line"></i>
+                    </div>
+                    Beiträge
+                </a>
+
+                <!-- <a class="nav-link" href="/admin/users">
+                    <div class="sb-nav-link-icon">
+                        <i class="ri-folder-user-line"></i>
+                    </div>
+                    Benutzer
+                </a>
+                <a class="nav-link" href="charts.html">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-circle-plus"></i></div>
+                    Add Product
+                </a> -->
+            </div>
+        </div>
+        <div class="sb-sidenav-footer">
+            <div class="small">Logged in as:</div>
+            Admin
+        </div>
+    </nav>
+</div>
+
+<!-- Start Main Section -->
+<div id="layoutSidenav_content">
+    {{end}}

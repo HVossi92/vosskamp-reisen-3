@@ -1,0 +1,67 @@
+package user
+
+import (
+	"vosskamp-reisen-3/internal/structs"
+	"vosskamp-reisen-3/internal/templates"
+)
+
+templ Home(data structs.HomePostsData) {
+	<!DOCTYPE html>
+	<html lang="de">
+		@templates.Libs()
+		<body hx-ext="preload">
+			@UserHeader(0)
+			<header class="hero">
+				<img
+					src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+					alt="Hero background"
+					style="position: absolute; width: 100%; height: 60vh; object-fit: cover; z-index: -1;"
+				/>
+				<div class="hero-content">
+					<h1 class="display-4">Finden Sie Ihren nächsten Urlaub</h1>
+					<p class="lead">Entdecken Sie die Welt mit Gruppenreisen Voßkamp</p>
+					<a href="/contact" class="btn btn-primary btn-lg" preload>Planen Sie Ihre Reise</a>
+				</div>
+			</header>
+			<main class="container my-5">
+				<h2 class="text-center mb-4">Erfolgreich geplante Reisen</h2>
+				@Blog(data)
+			</main>
+			<section class="bg-light py-5">
+				<div class="container">
+					<h2 class="text-center mb-4">Weshalb Gruppenreisen Voßkamp?</h2>
+					<div class="row">
+						<div class="col-md-4 mb-3">
+							<div class="text-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-globe" viewBox="0 0 16 16">
+									<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"></path>
+								</svg>
+								<h4 class="mt-3">Jahrelange Erfahrung</h4>
+								<p>Wir planen seit Jahren Reisen für Einzelpersonen, Paare, bis hin zu großen Vereinen.</p>
+							</div>
+						</div>
+						<div class="col-md-4 mb-3">
+							<div class="text-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+									<path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"></path>
+								</svg>
+								<h4 class="mt-3">Unvergessliche Erfahrungen</h4>
+								<p>Konzentrieren Sie sich darauf Ihren Urlaub zu genießen, wir kümmern uns um die Anreise.</p>
+							</div>
+						</div>
+						<div class="col-md-4 mb-3">
+							<div class="text-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+									<path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path>
+								</svg>
+								<h4 class="mt-3">Bestes Preis-Leistungs-Verhältnis</h4>
+								<p>Wir finden für Sie die optiomalen Reiseoptionen, damit Sie ihr Urlaubsbudget nicht schon bei der Anreise verpulvern.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			@UserFooter()
+		</body>
+	</html>
+}

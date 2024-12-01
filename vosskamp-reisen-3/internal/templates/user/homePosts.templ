@@ -1,0 +1,50 @@
+package user
+
+import (
+	"fmt"
+	"strconv"
+	"vosskamp-reisen-3/internal/structs"
+)
+
+templ HomePosts(data structs.HomePostsData) {
+	<div class="row row-cols g-4">
+		for _, post := range *data.Posts {
+			<div class="col-sm-3">
+				<div class="card mb-2">
+					if len(post.Picture)>0 {
+						<img src="/static/uploads/{{$post.Picture}}" class="card-img-top" alt="{{$post.Title}}"/>
+					} else {
+						<img src="/static/assets/placeholder.png" class="card-img-top" alt="{{$post.Title}}"/>
+					}
+					<div class="card-body">
+						<h5 class="card-title">{ post.Title }</h5>
+						<p class="card-text">
+							<small class="text-muted text-truncate" style="max-width: 200px; display: inline-block;">
+								{ post.Picture }
+								Description
+							</small>
+						</p>
+					</div>
+				</div>
+			</div>
+		}
+		<br/>
+		<div hx-ext="preload">
+			<ul class="pagination" preload>
+				if data.CurrentPage>1 {
+					<li><a hx-target="#home-rows" hx-get="/posts?page=1&limit={{.Limit}}">First</a></li>
+					<li>
+						<a hx-target="#home-rows" hx-get="/posts?page={{.PreviousPage}}&limit={{.Limit}}">Previous</a>
+					</li>
+				}
+				for i := range data.PageButtonsRange {
+					<li>
+						<a class={ "active", templ.KV("active", i+1==data.CurrentPage) } hx-target="#home-rows" hx-get={ fmt.Sprintf("/posts?page=%d&limit=%d", i, data.Limit) }>
+							{ strconv.Itoa(i+1) }
+						</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+}

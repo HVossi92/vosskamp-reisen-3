@@ -1,0 +1,70 @@
+package user
+
+import "vosskamp-reisen-3/internal/templates"
+
+templ About() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>About Us - Wanderlust Adventures</title>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+			<style>
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        .hero-content {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+    </style>
+		</head>
+		@templates.Libs()
+		<body>
+			@UserHeader(2)
+			<header class="hero">
+				<div class="hero-content">
+					<h1 class="display-4">Willkommen bei Gruppenreisen Voßkamp </h1>
+					<p class="lead">Ihre Experten für unvergessliche Gruppenabenteuer</p>
+				</div>
+			</header>
+			<main class="container my-5">
+				<div class="services_text">
+					<p>
+						Bei Gruppenreisen Voßkamp sind wir stolz darauf, mehr als 10 Jahre Erfahrung in der Planung
+						und Organisation von einzigartigen Gruppenreisen zu haben. Unser Engagement für Exzellenz
+						und unsere Leidenschaft für das Reisen haben es uns ermöglicht, unvergessliche Erlebnisse
+						für unsere Kunden zu schaffen.
+					</p>
+					<h2>Unsere Erfahrung spricht für sich</h2>
+					<p>
+						Mit einer Erfahrung von über einem Jahrzehnt in der Branche können Sie sich darauf
+						verlassen, dass Voßkamp Gruppenreisen die richtige Wahl für die Planung Ihrer nächsten
+						Gruppenreise ist. Unsere Experten kennen sich bestens aus, wenn es darum geht, die perfekte
+						Reiseroute zu erstellen, die individuellen Bedürfnisse Ihrer Gruppe zu berücksichtigen und
+						sicherzustellen, dass Ihre Reise zu einem unvergesslichen Erlebnis wird.
+					</p>
+					<h2>Unsere Dienstleistungen</h2>
+					<p>
+						Unsere Dienstleistungen umfassen die komplette Organisation von Gruppenreisen, von der
+						Planung und Buchung von Unterkünften bis zur Auswahl der besten Aktivitäten und Ausflüge.
+						Wir kümmern uns um alle Details, damit Sie sich entspannt zurücklehnen und Ihre Reise in
+						vollen Zügen genießen können.
+					</p>
+				</div>
+			</main>
+			@UserFooter()
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+		</body>
+	</html>
+}

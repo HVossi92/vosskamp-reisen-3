@@ -1,0 +1,76 @@
+package templates
+
+templ Libs() {
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta name="description" content=""/>
+		<meta name="author" content=""/>
+		<link rel="icon" href="/static/assets/favicon.ico" type="image/x-icon"/>
+		<title>Gruppenreisen Voßkamp</title>
+		<link href="/static/css/styles.css" rel="stylesheet"/>
+		<link href="/static/css/admin.css" rel="stylesheet"/>
+		<link href="/static/css/custom.css" rel="stylesheet"/>
+		<link href="/static/css/remix.css" rel="stylesheet"/>
+		<link href="/static/css/user.css" rel="stylesheet"/>
+		<script src="/static/htmx.js"></script>
+		<script src="/static/preload.js"></script>
+		<style>
+            .profile-image {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 3px solid #fff;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+            .header-container {
+                background: #007bff;
+                color: #fff;
+                padding: 30px 0;
+            }
+            .card-img-top {
+                height: 200px;
+                object-fit: cover;
+            }
+            .cart-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .cart-item:last-child {
+                border-bottom: none;
+            }
+            .check-icon {
+                font-size: 100px;
+                color: #28a745;
+            }
+            .htmx-indicator {
+                display: none;
+            }
+            .htmx-request .htmx-indicator{
+                display: inline-block;
+            }
+            .htmx-request.htmx-indicator{
+                display: inline-block;
+            }
+        </style>
+		<script>
+            htmx.on("htmx:beforeRequest", function(evt) {
+                if (evt.detail.elt.preloadState === 'READY') {
+                    document.getElementById('loadingIndicator').hidden = true;
+                }
+                document.getElementById('loadingIndicator').hidden = true;
+            });
+
+            document.addEventListener('mouseup', function(e) {
+                setTimeout(function() {
+                    // document.getElementById('loadingIndicator').hidden = false
+                }, 128);
+            });
+        </script>
+	</head>
+}

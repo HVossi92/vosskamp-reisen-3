@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"strconv"
+	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/structs"
 )
 
@@ -18,7 +19,9 @@ templ Blog(data structs.HomePostsData) {
 					} else {
 						<img src="/static/assets/placeholder.png" class="card-img-top" alt={ post.Title }/>
 					}
-					<p>Europe is full of well-known destinations, but there are still plenty of hidden gems waiting to be discovered. In this post, we'll take you on a journey to 10 lesser-known but equally stunning locations across the continent...</p>
+					<p>
+						@templ.Raw(helpers.ConvertQuillToPlainText(post.Body))
+					</p>
 					<a href={ templ.SafeURL(fmt.Sprintf("/post/%d", post.Id)) } class="btn btn-primary">Mehr</a>
 				</article>
 			}

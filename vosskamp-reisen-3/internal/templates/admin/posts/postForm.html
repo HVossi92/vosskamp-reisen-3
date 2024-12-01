@@ -1,0 +1,114 @@
+{{define "postForm"}}
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<div id="postForm">
+    <div class="card-header">
+        <i class="fa-solid fa-circle-plus me-1"></i>
+        Add New Post
+    </div>
+
+    <div class="card-body">
+        <form id="editProfileForm" novalidate>
+            <div id="errors"></div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Titel</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="Titel"
+                    value="{{.Post.Title}}">
+                {{if .ErrorMessages.Title}}
+                <div class="text-danger">Pflichtfeld</div>
+                {{end}}
+            </div>
+
+            <div class="mb-3">
+                <label for="body" class="form-label">Body</label>
+                <div id="quill-editor"></div>
+                <textarea name="body" style="display:none" id="body" value="{{.Post.Body}}"></textarea>
+
+                {{if .ErrorMessages.Body}}
+                <div class="text-danger">Pflichtfeld</div>
+                {{end}}
+            </div>
+            <div class="mb-3">
+                <label for="picture" class="form-label">Select Picture</label>
+                <input type="file" class="form-control" id="picture" name="picture">
+            </div>
+
+            {{if .IsUpdate}}
+            <button hx-put="/admin/post?id={{.Post.Id}}" hx-encoding="multipart/form-data" hx-target="#postForm"
+                hx-indicator="#loadingIndicator" type="submit" class="btn btn-primary">
+                Update Post
+            </button>
+            {{else}}
+            <button hx-post="/admin/post" hx-encoding="multipart/form-data" hx-target="#postForm"
+                hx-indicator="#loadingIndicator" type="submit" class="btn btn-primary">
+                Create Post
+            </button>
+            {{end}}
+        </form>
+    </div>
+</div>
+
+
+<script>
+    window.hasSettled = window.hasSettled || false;
+    htmx.on("htmx:afterSettle", function (evt) {
+        if (!window.hasSettled) {
+            console.log('afterSettle')
+            waitForQuillThenInit();
+            hasSettled = true;
+        }
+    });
+
+    htmx.on("htmx:afterSwap", function (evt) {
+        if (window.hasSettled) {
+            console.log('afterSwap')
+            waitForQuillThenInit();
+        }
+    });
+
+    function waitForQuillThenInit() {
+        const checkQuill = setInterval(() => {
+            console.log(typeof Quill !== 'undefined')
+            if (typeof Quill !== 'undefined') {
+                clearInterval(checkQuill);
+                initQuill();
+            }
+        }, 50); // Check every 50ms if Quill is defined
+    }
+
+    function initQuill() {
+        // Destroy the existing Quill instance if it exists
+        if (window.quill) {
+            window.quill.disable(); // Disable the existing instance
+            const oldToolbar = document.querySelector('.ql-toolbar');
+            if (oldToolbar) {
+                oldToolbar.remove();
+            }
+            window.quill = null
+        }
+        // Create a new instance of window.quill
+        const quillContainer = document.querySelector('#quill-editor');
+        if (!quillContainer) return
+        window.quill = new Quill(quillContainer, {
+            theme: 'snow'
+        });
+        const initialContent = `{{.Post.Body}}`;
+
+        if (initialContent) {
+            const parsedContent = JSON.parse(initialContent);
+            window.quill.setContents(parsedContent);
+            // Set initial content to textarea immediately
+            document.getElementById("body").value = JSON.stringify(parsedContent);
+        }
+
+        window.quill.on('text-change', (delta, oldDelta, source) => {
+            console.log(document.getElementById("body").value);
+            const content = window.quill.getContents()
+            document.getElementById("body").value = JSON.stringify(content);
+        });
+    }
+</script>
+
+{{end}}

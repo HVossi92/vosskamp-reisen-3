@@ -27,7 +27,7 @@ build-docker: clean
 	@echo ">>>>>>>>>>>> --------- Creating zip archive... --------- <<<<<<<<<<<<"
 	@zip -r $(BUILD_DIR).zip $(BUILD_DIR)
 
-	@rm -rf $(BUILD_DIR)
+	# @rm -rf $(BUILD_DIR)
 	@echo ">>>>>>>>>>>> --------- Build complete! Output: $(BUILD_DIR).zip --------- <<<<<<<<<<<<"
 
 clean:

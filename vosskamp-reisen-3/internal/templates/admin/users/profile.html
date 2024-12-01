@@ -1,0 +1,9 @@
+{{template "header" .}}
+
+<h4>Profile Information</h4>
+<p><strong>Vorname:</strong> {{.User.FirstName}} </p>
+<p><strong>Nachname:</strong> {{.User.LastName}} </p>
+<p><strong>Email:</strong> {{.User.Email}} </p>
+<p><strong>Registriert seit:</strong> {{.User.CreatedAt}} </p>
+
+{{template "footer"}}
