@@ -22,7 +22,7 @@ templ Blog(data structs.HomePostsData) {
 					<p>
 						@templ.Raw(helpers.ConvertQuillToPlainText(post.Body))
 					</p>
-					<a href={ templ.SafeURL(fmt.Sprintf("/post/%d", post.Id)) } class="btn btn-primary">Mehr</a>
+					<a preload preload-images="true" href={ templ.SafeURL(fmt.Sprintf("/post/%d", post.Id)) } class="btn btn-primary">Mehr</a>
 				</article>
 			}
 			<nav aria-label="pagination" hx-ext="preload">

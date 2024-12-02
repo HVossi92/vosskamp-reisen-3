@@ -33,7 +33,7 @@ func (m *MiddleWareService) CheckSession(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 			return
 		}
-		w.Header().Set("Cache-Control", "public, max-age=4") // Cache for 1 hour
+		w.Header().Set("Cache-Control", "public, max-age=3600")
 		ctx := context.WithValue(r.Context(), "user", user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

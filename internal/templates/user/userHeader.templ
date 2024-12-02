@@ -8,8 +8,8 @@ templ UserHeader(active int) {
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav ms-auto">
+				<div class="collapse navbar-collapse" id="navbarNav" hx-ext="preload">
+					<ul class="navbar-nav ms-auto" preload preload-images="true">
 						<li class="nav-item">
 							<a class={ "nav-link", templ.KV("active", active == 0) } href="/">Home</a>
 						</li>
@@ -23,7 +23,7 @@ templ UserHeader(active int) {
 							<a class={ "nav-link", templ.KV("active", active == 3) } href="/contact">Kontakt</a>
 						</li>
 						<li class="nav-item">
-							<a class="btn btn-primary" preload href="/login" title="Admin login">
+							<a class="btn btn-primary" href="/login" title="Admin login">
 								<i class="ri-admin-line"></i>
 							</a>
 						</li>

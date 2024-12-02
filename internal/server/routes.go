@@ -32,7 +32,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 	staticServer := http.FileServer(http.Dir("./internal/static"))
 	mux.Handle("GET /static/", http.StripPrefix("/static/", staticServer))
 
-	return mux
+	return addCacheControlMiddleware(mux)
+}
+
+func addCacheControlMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "max-age=60")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (s *Server) homeFormHandler(w http.ResponseWriter, r *http.Request) {
@@ -98,6 +105,7 @@ func (s *Server) postHandler(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
 	// 	return
 	// }
+	// w.Header().Set("Cache-Control", "public, max-age=3600")
 	handler := templ.Handler(user.Post(*post))
 	handler.ServeHTTP(w, r)
 }
