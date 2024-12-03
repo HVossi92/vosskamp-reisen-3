@@ -17,3 +17,9 @@ require (
 require github.com/dchenk/go-render-quill v0.0.0-20211110010230-f51106477162
 
 require github.com/a-h/templ v0.2.793
+
+require (
+	github.com/chai2010/webp v1.1.1 // indirect
+	github.com/disintegration/imaging v1.6.2 // indirect
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
+)

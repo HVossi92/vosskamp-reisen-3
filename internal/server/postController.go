@@ -1,16 +1,22 @@
 package server
 
 import (
+	"fmt"
 	"html/template"
-	"io"
+	_ "image/gif"  // Register GIF decoder
+	_ "image/jpeg" // Register JPEG decoder
+	_ "image/png"  // Register PNG decoder
 	"math"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"vosskamp-reisen-3/internal/helpers"
 	"vosskamp-reisen-3/internal/models"
 
+	"github.com/chai2010/webp"
+	"github.com/disintegration/imaging"
 	"github.com/google/uuid"
 )
 
@@ -138,7 +144,10 @@ func (s *Server) updatePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if existingPost.Picture != "" && post.Picture != "" {
+	pic, _, _ := r.FormFile("picture")
+	fmt.Println(pic)
+	if existingPost.Picture != "" && pic != nil {
+		fmt.Println("Do it")
 		err := removePicture(w, err, existingPost)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -146,10 +155,12 @@ func (s *Server) updatePostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	post.Picture, err = writeImage(w, r, err, post)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if pic != nil {
+		post.Picture, err = writeImage(w, r, err, post)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	post.Id = postId
@@ -313,38 +324,61 @@ func (s *Server) fetchPostsRows(w http.ResponseWriter, r *http.Request) {
 
 func writeImage(w http.ResponseWriter, r *http.Request, err error, post models.Posts) (string, error) {
 	file, handler, err := r.FormFile("picture")
-	if err == nil {
-		// Generate a unique filename to prevent overwriting and conflicts
-		random, err := uuid.NewRandom()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return "", err
-		}
-		filename := random.String() + filepath.Ext(handler.Filename) // Append the file extension
-
-		// Create the full path for saving the file
-		filePath := filepath.Join("internal/static/uploads", filename)
-
-		// Save the file to the server
-		dst, err := os.Create(filePath)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return "", err
-		}
-		defer func(dst *os.File) {
-			err := dst.Close()
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}(dst)
-
-		if _, err = io.Copy(dst, file); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return "", err
-		}
-		post.Picture = filename
+	if err != nil {
+		return "", err
 	}
+	defer file.Close()
+
+	// Check file extension
+	ext := strings.ToLower(filepath.Ext(handler.Filename))
+	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".gif" {
+		http.Error(w, "Unsupported file format. Please upload JPG, PNG, or GIF", http.StatusBadRequest)
+		return "", fmt.Errorf("unsupported file format: %s", ext)
+	}
+
+	// Generate a unique filename
+	random, err := uuid.NewRandom()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return "", err
+	}
+
+	// Create filename with .webp extension
+	filename := random.String() + ".webp"
+	filePath := filepath.Join("internal/static/uploads", filename)
+
+	// Read and fix image orientation
+	img, err := imaging.Decode(file, imaging.AutoOrientation(true))
+	if err != nil {
+		http.Error(w, "Failed to decode image: "+err.Error(), http.StatusBadRequest)
+		return "", err
+	}
+
+	// Create destination file for WebP
+	dst, err := os.Create(filePath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return "", err
+	}
+	defer func(dst *os.File) {
+		err := dst.Close()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}(dst)
+
+	// Encode as WebP
+	options := &webp.Options{
+		Lossless: false,
+		Quality:  80,
+	}
+	if err = webp.Encode(dst, img, options); err != nil {
+		http.Error(w, "Failed to encode WebP: "+err.Error(), http.StatusInternalServerError)
+		return "", err
+	}
+
+	post.Picture = filename
 	return post.Picture, nil
 }
 
