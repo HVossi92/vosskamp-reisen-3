@@ -24,6 +24,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	mux.HandleFunc("GET /affiliate", s.affiliateHandler)
 	mux.HandleFunc("GET /about", s.aboutHandler)
 	mux.HandleFunc("GET /contact", s.contactHandler)
+	mux.HandleFunc("GET /dsvgo", s.dsvgoHandler)
+	mux.HandleFunc("GET /impressum", s.impressumHandler)
 
 	s.RegisterPostRoutes(mux)
 	s.RegisterEmailRoutes(mux)
@@ -121,6 +123,16 @@ func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Contact())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) dsvgoHandler(w http.ResponseWriter, r *http.Request) {
+	handler := templ.Handler(user.Dsvgo())
+	handler.ServeHTTP(w, r)
+}
+
+func (s *Server) impressumHandler(w http.ResponseWriter, r *http.Request) {
 	handler := templ.Handler(user.Contact())
 	handler.ServeHTTP(w, r)
 }
