@@ -47,3 +47,6 @@ database.db-wal
 
 # Images
 internal/static/uploads/*
+
+*.zip
+/vosskamp-reisen-3
