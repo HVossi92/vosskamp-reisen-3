@@ -133,7 +133,7 @@ func (s *Server) dsvgoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) impressumHandler(w http.ResponseWriter, r *http.Request) {
-	handler := templ.Handler(user.Contact())
+	handler := templ.Handler(user.Impressum())
 	handler.ServeHTTP(w, r)
 }
 
