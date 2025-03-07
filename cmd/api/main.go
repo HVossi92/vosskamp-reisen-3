@@ -37,8 +37,8 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
-
 	server := server.NewServer()
+	server.Addr = ":8081"
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
@@ -46,7 +46,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
-	fmt.Println("Listening on port 8080")
+	fmt.Println("Listening on port 8081")
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
